@@ -1,7 +1,9 @@
 ---- MODULE Counter ----
 EXTENDS Integers
 
-VARIABLE counter
+VARIABLE
+  \* @type: Int;
+  counter
 
 Init == counter = 0
 

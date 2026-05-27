@@ -12,13 +12,20 @@
 \*      the output directory.
 \*   5. Return GeneratedTraces or an error.
 
-EXTENDS Naturals, FiniteSets, TLC
+EXTENDS Naturals, FiniteSets
 
 \* ---------------------------------------------------------------------------
 \* Model-value constants for Apalache exit outcomes
 \* ---------------------------------------------------------------------------
 CONSTANTS
-  A_OK, A_CEX, A_FAIL, A_NOTFOUND      \* Apalache result values
+  \* @type: Str;
+  A_OK,
+  \* @type: Str;
+  A_CEX,
+  \* @type: Str;
+  A_FAIL,
+  \* @type: Str;
+  A_NOTFOUND
 
 ASSUME /\ A_OK \notin {A_CEX, A_FAIL, A_NOTFOUND}
        /\ A_CEX \notin {A_FAIL, A_NOTFOUND}
@@ -29,16 +36,32 @@ ApalacheResultValues == {A_OK, A_CEX, A_FAIL, A_NOTFOUND}
 \* ---------------------------------------------------------------------------
 \* Scenario constants (boolean flags)
 \* ---------------------------------------------------------------------------
-CONSTANT SpecExists       \* boolean
-CONSTANT HasItfFiles       \* boolean
-CONSTANT UserOutDir        \* boolean
-CONSTANT KeepOutputs       \* boolean
-CONSTANT TempDirFailed     \* boolean
-CONSTANT TraceParseFailed  \* boolean
-CONSTANT ApalacheTimeout   \* boolean
+CONSTANT
+  \* @type: Bool;
+  SpecExists
+CONSTANT
+  \* @type: Bool;
+  HasItfFiles
+CONSTANT
+  \* @type: Bool;
+  UserOutDir
+CONSTANT
+  \* @type: Bool;
+  KeepOutputs
+CONSTANT
+  \* @type: Bool;
+  TempDirFailed
+CONSTANT
+  \* @type: Bool;
+  TraceParseFailed
+CONSTANT
+  \* @type: Bool;
+  ApalacheTimeout
 
 \* Which Apalache outcome occurs (must be one of the model values above)
-CONSTANT ApalacheResult
+CONSTANT
+  \* @type: Str;
+  ApalacheResult
 
 ASSUME ApalacheResult \in ApalacheResultValues
 
@@ -46,8 +69,11 @@ ASSUME ApalacheResult \in ApalacheResultValues
 \* State machine for generate_traces
 \* ---------------------------------------------------------------------------
 
-VARIABLE pc      \* program counter
-VARIABLE result  \* outcome label
+VARIABLE
+  \* @type: Str;
+  pc,
+  \* @type: Str;
+  result
 
 Outcomes == {
     "Init",
@@ -143,7 +169,10 @@ Next ==
 \* Specification (with weak fairness to prevent infinite stuttering)
 \* ---------------------------------------------------------------------------
 
-Spec == Init /\ [][Next]_<<pc, result>> /\ WF_<<pc, result>>(Next)
+\* @type: <<Str, Str>>;
+Vars == <<pc, result>>
+
+Spec == Init /\ [][Next]_Vars /\ WF_Vars(Next)
 
 \* ---------------------------------------------------------------------------
 \* INVARIANTS (state predicates — checked at every state)
